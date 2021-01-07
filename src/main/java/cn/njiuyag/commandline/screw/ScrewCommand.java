@@ -23,10 +23,12 @@ import java.util.Properties;
  */
 @CommandLine.Command(name = "screw",description = "数据库文档导出",mixinStandardHelpOptions = true)
 public class ScrewCommand implements Runnable {
-    @CommandLine.Option(names = "--configFile",description = "配置文件",required = true)
+    @CommandLine.Option(names = {"-conf","--configFile"},description = "配置文件",required = true,usageHelp = true,versionHelp = true)
     private File configFile;
+
     @Override
     public void run() {
+        System.out.println("加载配置文件");
         Properties properties = new Properties();
         try(FileInputStream stream=new FileInputStream(configFile)) {
             properties.load(new InputStreamReader(stream,"UTF-8"));
@@ -35,7 +37,7 @@ public class ScrewCommand implements Runnable {
             System.out.println("配置文件加载失败:"+e.getLocalizedMessage());
         }
 
-
+        System.out.println("设置数据库连接");
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName(properties.getProperty(ScrewConfigKey.DATABASE_DRIVER_CLASS_NAME,ScrewConfigKey.DATABASE_DRIVER_CLASS_NAME_DEFAULT_VALUE));
         hikariConfig.setJdbcUrl(properties.getProperty(ScrewConfigKey.DATABASE_URL,""));
@@ -43,6 +45,7 @@ public class ScrewCommand implements Runnable {
         hikariConfig.setPassword(properties.getProperty(ScrewConfigKey.DATABASE_PASSWORD,""));
         HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
 
+        System.out.println("构建EngineConfig");
         EngineConfig engineConfig = EngineConfig.builder()
                 .fileOutputDir(properties.getProperty(ScrewConfigKey.OUTPUT_FILE_DIR,""))
                 .openOutputDir(true)
@@ -66,8 +69,7 @@ public class ScrewCommand implements Runnable {
         if (!StrUtil.isEmpty(ignoreTableSuffixesConfig)) {
             ignoreTableSuffixes = Arrays.asList(ignoreTableSuffixesConfig.split(","));
         }
-
-
+        System.out.println("构建ProcessConfig");
         ProcessConfig processConfig = ProcessConfig.builder()
                 .designatedTableName(new ArrayList<>())
                 .designatedTablePrefix(new ArrayList<>())
@@ -76,6 +78,7 @@ public class ScrewCommand implements Runnable {
                 .ignoreTablePrefix(ignoreTablePrefixes)
                 .ignoreTableSuffix(ignoreTableSuffixes)
                 .build();
+        System.out.println("构建Configuration");
         Configuration configuration=Configuration.builder()
                 .version(properties.getProperty(ScrewConfigKey.VERSION))
                 .description(properties.getProperty(ScrewConfigKey.DESCRIPTION))
@@ -83,6 +86,8 @@ public class ScrewCommand implements Runnable {
                 .engineConfig(engineConfig)
                 .produceConfig(processConfig)
                 .build();
+
+        System.out.println("操作执行");
         new DocumentationExecute(configuration).execute();
 
     }
