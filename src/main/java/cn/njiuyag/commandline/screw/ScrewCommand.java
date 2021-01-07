@@ -23,7 +23,7 @@ import java.util.Properties;
  */
 @CommandLine.Command(name = "screw",description = "数据库文档导出",mixinStandardHelpOptions = true)
 public class ScrewCommand implements Runnable {
-    @CommandLine.Option(names = {"-conf","--configFile"},description = "配置文件",required = true,usageHelp = true,versionHelp = true)
+    @CommandLine.Option(names = {"-conf","--configFile"},description = "配置文件",required = true)
     private File configFile;
 
     @Override
