@@ -8,7 +8,7 @@ import picocli.CommandLine;
  * @date 2021/1/4
  */
 @CommandLine.Command(name = "ngi",subcommands = {
-        ScrewCommand.class,TemplateCommand.class
+        ScrewCommand.class,TemplateCommand.class,MybatisGeneratorCommand.class
 },description = "njiuyag 命令行工具",mixinStandardHelpOptions = true)
 public class Main {
     public static void main(String... args) {
