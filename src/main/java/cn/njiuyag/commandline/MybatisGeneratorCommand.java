@@ -30,7 +30,7 @@ public class MybatisGeneratorCommand implements Runnable{
 
     @Override
     public void run() {
-        List<String> warnings = new ArrayList<String>();
+        List<String> warnings = new ArrayList<>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
         try {
             Configuration config = cp.parseConfiguration(configFile);
@@ -38,7 +38,7 @@ public class MybatisGeneratorCommand implements Runnable{
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, callback, warnings);
             myBatisGenerator.generate(null);
         } catch (Exception e) {
-            System.out.println("生成异常");
+            System.out.println("生成异常"+e.getLocalizedMessage());
         }
 
     }
